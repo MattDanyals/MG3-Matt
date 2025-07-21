@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MG3 Hybrid Maintenance Schedule</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <!--
+    Narrative & Structure Plan:
+    The infographic presents a clear narrative for MG3 Hybrid owners, titled "Your Complete Guide to MG3 Hybrid Longevity." The structure flows from a high-level introduction to a detailed, chronological maintenance timeline, followed by supplementary data visualizations for component lifespan and service costs.
+    1. Header: Title and a hook statement.
+    2. Introduction: Emphasizes the importance of hybrid-specific maintenance for efficiency and durability.
+    3. Core Maintenance Timeline: A grid of cards, each detailing tasks for a specific service interval (e.g., 24,000 km, 48,000 km).
+    4. Key Component Lifespan: A visual timeline for common wear-and-tear parts, implemented with HTML/CSS.
+    5. Hybrid System Health Section: A dedicated card explaining the checks for the battery and inverter cooling system, using a simple HTML/CSS flow diagram.
+    6. Estimated Service Cost Comparison: A bar chart visualizing the relative cost increase for major vs. minor services.
+    7. New Section: Detailed Component Breakdown List with KM intervals.
+    8. Footer: Disclaimer and final encouragement.
+
+    Visualization Selection Plan:
+    - Data Point: Service Cost Comparison -> Goal: Compare -> Chosen Visualization: Bar Chart -> Justification/Library: A Bar Chart is ideal for comparing the magnitude of estimated costs across different service intervals. Implemented with Chart.js for responsive, canvas-based rendering. NO SVG.
+    - Data Point: Key Component Replacement Timeline -> Goal: Change -> Chosen Visualization: HTML/CSS Timeline -> Justification/Library: A structured HTML list styled with Tailwind CSS is perfect for showing discrete events (replacements) over time without needing a complex chart. NO SVG.
+    - Data Point: Hybrid System Check Process -> Goal: Organize -> Chosen Visualization: HTML/CSS Flow Chart -> Justification/Library: A simple flow diagram is built with flexbox, borders, and styled divs to clearly show the two-step check process. This avoids prohibited libraries. NO SVG, NO MERMAID JS.
+    - Data Point: Single Stat (Efficiency) -> Goal: Inform -> Chosen Visualization: Big Number -> Justification/Library: Large, bold text for a high-impact statistic. Implemented with HTML/CSS. NO SVG.
+    - Data Point: Component Breakdown List -> Goal: Organize/Inform -> Chosen Visualization: Detailed HTML/CSS List/Cards -> Justification/Library: A structured list or series of cards using HTML and Tailwind CSS is ideal for presenting detailed textual information about each component and its maintenance interval clearly. NO SVG.
+
+    Color Palette Selection:
+    - Chosen Palette: Brilliant Blues.
+    - Hex Codes: #005F73 (Dark Teal), #0A9396 (Teal), #94D2BD (Mint), #E9D8A6 (Beige), #EE9B00 (Orange), #CA6702 (Burnt Orange), #BB3E03 (Rust), #AE2012 (Red), #9B2226 (Dark Red).
+    - Justification: This palette provides a professional, high-contrast, and vibrant theme suitable for a modern vehicle infographic.
+
+    Confirmation: NEITHER Mermaid JS NOR SVG were used anywhere in this output. All charts are rendered on <canvas> elements by Chart.js and all diagrams are constructed with structured HTML and Tailwind CSS.
+    -->
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #F0F4F8;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 900px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 50vh;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 450px;
+            }
+        }
+        .gradient-text {
+            background: linear-gradient(90deg, #0A9396, #005F73);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .timeline-item {
+            position: relative;
+            padding-bottom: 2rem;
+            padding-left: 2.5rem;
+        }
+        .timeline-item:last-child {
+            padding-bottom: 0;
+        }
+        .timeline-marker {
+            position: absolute;
+            left: 0;
+            top: 0.25rem;
+            height: 1rem;
+            width: 1rem;
+            background-color: #EE9B00;
+            border-radius: 9999px;
+            border: 3px solid #E9D8A6;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 0.45rem;
+            top: 0.25rem;
+            bottom: -0.25rem;
+            width: 2px;
+            background-color: #94D2BD;
+        }
+        .flow-arrow {
+            font-size: 2rem;
+            line-height: 1;
+            color: #94D2BD;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="container mx-auto p-4 md:p-8">
+
+        <header class="text-center mb-12">
+            <h1 class="text-4xl md:text-6xl font-black gradient-text">MG3 Hybrid+</h1>
+            <p class="text-xl md:text-2xl font-light text-gray-600 mt-2">Your Complete Guide to Longevity & Performance</p>
+            <a href="#component-breakdown" class="inline-block mt-6 px-6 py-3 bg-[#0A9396] text-white font-bold rounded-lg shadow-md hover:bg-[#005F73] transition duration-300">
+                View Component Breakdown
+            </a>
+        </header>
+
+        <section class="mb-16 bg-white rounded-lg shadow-md p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-[#005F73] mb-4">Protecting Your Investment</h2>
+            <p class="text-base md:text-lg text-gray-700 leading-relaxed">
+                Regular maintenance is vital for any vehicle, but for a sophisticated Hybrid+ system like the one in your MG3, it's the key to unlocking maximum efficiency, reliability, and long-term battery health. This guide outlines the recommended service schedule to keep your MG3 performing at its peak, from the first check-up to 200,000 kilometers and beyond. Following this schedule ensures both the petrol engine and the advanced electric components work in perfect harmony.
+            </p>
+        </section>
+
+        <h2 class="text-3xl md:text-4xl font-bold text-center text-[#005F73] mb-10">Core Maintenance Schedule</h2>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            
+            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <img src="https://placehold.co/600x400/005F73/FFFFFF?text=Initial+Check-up" alt="Initial Check-up" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow">
+                    <h3 class="text-xl font-bold text-[#005F73]">First 1,000 - 5,000 km</h3>
+                    <p class="text-sm font-semibold text-[#EE9B00] mb-4">Initial Inspection</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>General safety and systems check.</li>
+                        <li>Check and top-up all fluid levels.</li>
+                        <li>Inspect for any potential fluid leaks.</li>
+                        <li>Confirm proper operation of all lights and electronics.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <img src="https://placehold.co/600x400/0A9396/FFFFFF?text=Oil+%26+Filter" alt="Oil and Filter Change" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow">
+                    <h3 class="text-xl font-bold text-[#005F73]">24,000 km or 12 Months</h3>
+                    <p class="text-sm font-semibold text-[#EE9B00] mb-4">Minor Service</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>Replace engine oil and filter.</li>
+                        <li>Comprehensive vehicle health check.</li>
+                        <li>Inspect tyre condition and pressures.</li>
+                        <li>Check brake system components.</li>
+                        <li>Inspect and clean 12V battery terminals.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <img src="https://placehold.co/600x400/94D2BD/005F73?text=Brake+Fluid" alt="Brake Fluid Change" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow">
+                    <h3 class="text-xl font-bold text-[#005F73]">48,000 km or 24 Months</h3>
+                    <p class="text-sm font-semibold text-[#EE9B00] mb-4">Intermediate Service</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>All items from 24,000 km service.</li>
+                        <li><strong>Replace brake fluid.</strong></li>
+                        <li><strong>Replace cabin air filter (pollen filter).</strong></li>
+                        <li>Inspect suspension and steering components.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <img src="https://placehold.co/600x400/0A9396/FFFFFF?text=Routine+Service" alt="Routine Service" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow">
+                    <h3 class="text-xl font-bold text-[#005F73]">72,000 km or 36 Months</h3>
+                    <p class="text-sm font-semibold text-[#EE9B00] mb-4">Minor Service</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>Repeats the 24,000 km service schedule.</li>
+                        <li>Replace engine oil and filter.</li>
+                        <li>Comprehensive vehicle health check.</li>
+                        <li>Deep inspection of braking system wear.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <img src="https://placehold.co/600x400/EE9B00/FFFFFF?text=Major+Service" alt="Major Service" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow">
+                    <h3 class="text-xl font-bold text-[#005F73]">96,000 km or 48 Months</h3>
+                    <p class="text-sm font-semibold text-[#CA6702] mb-4">Major Service</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>All items from 48,000 km service.</li>
+                        <li><strong>Replace engine air filter.</strong></li>
+                        <li><strong>Replace spark plugs.</strong></li>
+                        <li>Inspect auxiliary drive belts.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md overflow-hidden flex flex-col">
+                <img src="https://placehold.co/600x400/CA6702/FFFFFF?text=Coolant+System" alt="Coolant System Service" class="w-full h-48 object-cover">
+                <div class="p-6 flex-grow">
+                    <h3 class="text-xl font-bold text-[#005F73]">160,000 km or 10 Years</h3>
+                    <p class="text-sm font-semibold text-[#BB3E03] mb-4">Long-Life Service</p>
+                    <ul class="list-disc list-inside space-y-2 text-gray-600">
+                        <li>This interval may vary, consult your dealer.</li>
+                        <li><strong>Replace engine coolant.</strong></li>
+                        <li><strong>Replace hybrid inverter coolant.</strong></li>
+                        <li>Thorough inspection of all hoses and cooling system components.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8 text-center bg-teal-50 border-l-4 border-[#0A9396] text-teal-800 p-4 rounded-r-lg" role="alert">
+            <p class="font-bold">Note on Service Cycles</p>
+            <p>The maintenance cycle repeats. For example, the 120,000 km service is similar to the 24,000 km service, and the 144,000 km service mirrors the 48,000 km one. Always perform the tasks for the specified mileage or time, whichever comes first.</p>
+        </div>
+
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 items-start">
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-[#005F73] mb-6">Key Component Lifespan</h2>
+                <p class="text-gray-700 leading-relaxed mb-6">Beyond scheduled services, certain components wear out over time. Here are typical replacement intervals to help you budget and plan ahead. Actual lifespan depends on driving style and conditions.</p>
+                <div class="relative">
+                    <div class="timeline-line"></div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <h4 class="font-bold text-lg text-[#0A9396]">Tyres</h4>
+                        <p class="text-gray-600">Inspect regularly. Replace every 40,000 - 60,000 km.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <h4 class="font-bold text-lg text-[#0A9396]">Brake Pads & Discs</h4>
+                        <p class="text-gray-600">Regenerative braking often extends life. Inspect annually, replace as needed (typically 60,000 - 100,000+ km).</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <h4 class="font-bold text-lg text-[#0A9396]">12V Battery</h4>
+                        <p class="text-gray-600">Replace every 3 - 5 years.</p>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-marker"></div>
+                        <h4 class="font-bold text-lg text-[#0A9396]">Wiper Blades</h4>
+                        <p class="text-gray-600">Replace every 6 - 12 months for clear visibility.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-md p-6 md:p-8">
+                <h2 class="text-2xl md:text-3xl font-bold text-[#005F73] mb-6">Hybrid System Health Check</h2>
+                <p class="text-gray-700 leading-relaxed mb-6">At every service, your technician should perform a specific check on the Hybrid+ system. This is crucial for maintaining the efficiency and health of the electric components.</p>
+                <div class="flex items-center justify-center space-x-4 bg-gray-50 p-6 rounded-lg">
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-full bg-[#94D2BD] flex items-center justify-center mx-auto mb-2">
+                           <span class="text-4xl">🔋</span>
+                        </div>
+                        <h5 class="font-bold text-[#005F73]">High Voltage Battery</h5>
+                        <p class="text-sm text-gray-600">Scan for fault codes</p>
+                    </div>
+                    <div class="flow-arrow">→</div>
+                    <div class="text-center">
+                        <div class="w-24 h-24 rounded-full bg-[#94D2BD] flex items-center justify-center mx-auto mb-2">
+                           <span class="text-4xl">❄️</span>
+                        </div>
+                        <h5 class="font-bold text-[#005F73]">Inverter Coolant</h5>
+                        <p class="text-sm text-gray-600">Check level & condition</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="mt-16 bg-white rounded-lg shadow-md p-6 md:p-8">
+            <h2 class="text-2xl md:text-3xl font-bold text-[#005F73] mb-2 text-center">Estimated Service Cost Comparison</h2>
+            <p class="text-gray-700 leading-relaxed mb-6 text-center max-w-3xl mx-auto">This chart illustrates the relative cost of scheduled services. Minor services are the baseline, while intermediate and major services that require more parts and labor (like brake fluid or spark plugs) will cost more. This is for planning purposes only; actual costs will vary.</p>
+            <div class="chart-container">
+                <canvas id="costChart"></canvas>
+            </div>
+        </section>
+
+        <section id="component-breakdown" class="mt-16 bg-white rounded-lg shadow-md p-6 md:p-8">
+            <h2 class="text-3xl md:text-4xl font-bold text-center text-[#005F73] mb-10">Detailed Component Maintenance Breakdown</h2>
+            <p class="text-gray-700 leading-relaxed mb-8 text-center max-w-3xl mx-auto">
+                This section provides a comprehensive list of key components in your MG3 Hybrid, detailing their typical maintenance tasks and recommended intervals. Keep in mind that actual intervals can vary based on driving conditions and individual vehicle usage.
+            </p>
+
+            <img src="https://placehold.co/900x300/005F73/FFFFFF?text=Detailed+Component+View" alt="Detailed Component View" class="w-full h-auto object-cover rounded-lg mb-8">
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Component 1: Engine Oil & Filter -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Engine Oil & Filter</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 10,000-15,000 km or 12 months</p>
+                </div>
+                <!-- Component 2: Brake Fluid -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Brake Fluid</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 48,000 km or 24 months</p>
+                </div>
+                <!-- Component 3: Cabin Air Filter (Pollen) -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Cabin Air Filter (Pollen)</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 48,000 km or 24 months</p>
+                </div>
+                <!-- Component 4: Engine Air Filter -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Engine Air Filter</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 96,000 km or 48 months (or more frequently in dusty conditions)</p>
+                </div>
+                <!-- Component 5: Spark Plugs -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Spark Plugs</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 96,000 km or 48 months</p>
+                </div>
+                <!-- Component 6: Engine Coolant -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Engine Coolant</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> 160,000 km or 10 years</p>
+                </div>
+                <!-- Component 7: Hybrid Inverter Coolant -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Hybrid Inverter Coolant</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> 160,000 km or 10 years (or 120,000-200,000 km / 5-10 years for other hybrids)</p>
+                </div>
+                <!-- Component 8: Tyres -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Tyres</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Rotate, Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Rotate every 8,000-11,000 km; Replace every 40,000-60,000 km</p>
+                </div>
+                <!-- Component 9: Brake Pads & Discs -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Brake Pads & Discs</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Clean, Lubricate, Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Inspect annually; Replace as needed (60,000-100,000+ km)</p>
+                </div>
+                <!-- Component 10: 12V Battery -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">12V Battery</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Replace every 3-5 years (or proactively due to anecdotal reports)</p>
+                </div>
+                <!-- Component 11: Wiper Blades -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Wiper Blades</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 6-12 months</p>
+                </div>
+                <!-- Component 12: High Voltage Battery -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">High Voltage Battery</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Health Monitoring (Diagnostic)</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Designed for 8-15 years or 160,000-320,000 km</p>
+                </div>
+                <!-- Component 13: Inverter System -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Inverter System</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspection, Software Updates</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Annual/Regular Service, As needed for updates</p>
+                </div>
+                <!-- Component 14: e-CVT Transmission Fluid -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">e-CVT Transmission Fluid</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Drain & Refill</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> 48,000-145,000 km or 2-4 years (check manual)</p>
+                </div>
+                <!-- Component 15: Shock Absorbers/Struts -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Shock Absorbers/Struts</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Inspect regularly; Replace 80,000-160,000 km</p>
+                </div>
+                <!-- Component 16: Suspension Bushings -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Suspension Bushings</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Inspect regularly; Replace 80,000-240,000 km</p>
+                </div>
+                <!-- Component 17: Control Arms/Ball Joints -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Control Arms/Ball Joints</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Inspect regularly; Replace 112,000-240,000 km</p>
+                </div>
+                <!-- Component 18: Fuel Filter -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Fuel Filter</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Replace</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> 48,000-96,000 km (check manual)</p>
+                </div>
+                <!-- Component 19: Wheel Alignment -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Wheel Alignment</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Check & Adjust</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Every 2-3 years, or with new tires/suspension work</p>
+                </div>
+                <!-- Component 20: Rust Protection -->
+                <div class="bg-gray-50 rounded-lg p-5 shadow-sm border border-[#94D2BD]">
+                    <h3 class="text-xl font-bold text-[#0A9396] mb-2">Rust Protection</h3>
+                    <p class="text-sm text-gray-600 mb-2"><strong>Task:</strong> Inspect, Apply Aftermarket Coating</p>
+                    <p class="text-sm text-gray-600"><strong>Interval:</strong> Proactive inspection annually; Coating as needed (especially in harsh climates)</p>
+                </div>
+            </div>
+        </section>
+
+        <footer class="text-center mt-16 text-gray-500 text-sm">
+            <p>This infographic is a general guide based on typical maintenance schedules. Always refer to your official MG owner's manual or consult an authorized MG service center for the most accurate and up-to-date information for your specific vehicle and region.</p>
+            <p class="mt-2 font-semibold">Drive safe and enjoy your MG3 Hybrid+!</p>
+        </footer>
+
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const costCtx = document.getElementById('costChart').getContext('2d');
+            new Chart(costCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['24k km', '48k km', '72k km', '96k km', '120k km', '144k km', '168k km', '192k km'],
+                    datasets: [{
+                        label: 'Relative Service Cost Unit',
+                        data: [1.0, 1.8, 1.0, 2.5, 1.0, 1.8, 1.2, 2.8],
+                        backgroundColor: [
+                            '#94D2BD',
+                            '#0A9396',
+                            '#94D2BD',
+                            '#EE9B00',
+                            '#94D2BD',
+                            '#0A9396',
+                            '#94D2BD',
+                            '#CA6702'
+                        ],
+                        borderColor: '#005F73',
+                        borderWidth: 2,
+                        borderRadius: 5
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        title: {
+                            display: true,
+                            text: 'Relative Cost per Service Interval (km)',
+                            font: {
+                                size: 16,
+                                family: 'Inter',
+                                weight: 'bold',
+                            },
+                            color: '#005F73'
+                        },
+                        tooltip: {
+                            backgroundColor: '#005F73',
+                            titleFont: {
+                                size: 14,
+                                weight: 'bold',
+                            },
+                            bodyFont: {
+                                size: 12,
+                            },
+                            callbacks: {
+                                title: function(tooltipItems) {
+                                    const item = tooltipItems[0];
+                                    let label = item.chart.data.labels[item.dataIndex];
+                                    if (Array.isArray(label)) {
+                                      return label.join(' ');
+                                    } else {
+                                      return label;
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e0e0e0'
+                            },
+                            ticks: {
+                                color: '#333'
+                            },
+                            title: {
+                                display: true,
+                                text: 'Relative Cost Factor',
+                                color: '#005F73',
+                                font: {
+                                    weight: 'bold'
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                color: '#333'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
